@@ -11,10 +11,9 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.Util;
 import net.minecraft.util.text.TranslationTextComponent;
 import team.chisel.Chisel;
 import team.chisel.common.init.ChiselSounds;
@@ -59,15 +58,15 @@ public class CarvingUtils {
 	    return Objects.hashCode(stack.getItem(), stack.getTag());
 	}
 	
-	private static TranslationTextComponent getDisplayName(Tag<?> tag, String name) {
-	    return Chisel.registrate().addLang("group", tag.getId(), name);
+	private static TranslationTextComponent getDisplayName(ITag.INamedTag<?> tag, String name) {
+	    return Chisel.registrate().addLang("group", tag.func_230234_a_(), name);
 	}
 
-    public static ICarvingGroup itemGroup(Tag<Block> blocks, String name) {
+    public static ICarvingGroup itemGroup(ITag.INamedTag<Block> blocks, String name) {
         return new BlockTagGroup(blocks, getDisplayName(blocks, name));
     }
 
-    public static ICarvingGroup blockGroup(Tag<Item> items, String name) {
+    public static ICarvingGroup blockGroup(ITag.INamedTag<Item> items, String name) {
         return new ItemTagGroup(items, getDisplayName(items, name));
     }
 	
@@ -110,15 +109,15 @@ public class CarvingUtils {
 
 	private static class BlockTagGroup extends AbstractGroup {
 
-		public BlockTagGroup(Tag<Block> tag, TranslationTextComponent displayName) {
-		    super(tag.getId(), displayName);
+		public BlockTagGroup(ITag.INamedTag<Block> tag, TranslationTextComponent displayName) {
+		    super(tag.func_230234_a_(), displayName);
 		}
 	}
 
 	private static class ItemTagGroup extends AbstractGroup {
 	    
-	    public ItemTagGroup(Tag<Item> tag, TranslationTextComponent displayName) {
-	        super(tag.getId(), displayName);
+	    public ItemTagGroup(ITag.INamedTag<Item> tag, TranslationTextComponent displayName) {
+	        super(tag.func_230234_a_(), displayName);
 	    }
 	}
 }

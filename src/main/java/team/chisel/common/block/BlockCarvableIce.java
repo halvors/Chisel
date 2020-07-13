@@ -37,7 +37,7 @@ public class BlockCarvableIce extends BlockCarvable {
     public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         if (EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, stack) == 0) {
-            if (worldIn.dimension.doesWaterVaporize()) {
+            if (worldIn.func_230315_m_().func_236040_e_()) {
                 worldIn.removeBlock(pos, false);
                 return;
             }
@@ -51,14 +51,14 @@ public class BlockCarvableIce extends BlockCarvable {
     }
 
     public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
-        if (worldIn.getLightLevel(LightType.BLOCK, pos) > 11 - state.getOpacity(worldIn, pos)) {
+        if (worldIn.getLightFor(LightType.BLOCK, pos) > 11 - state.getOpacity(worldIn, pos)) {
             this.turnIntoWater(state, worldIn, pos);
         }
 
     }
 
     protected void turnIntoWater(BlockState p_196454_1_, World p_196454_2_, BlockPos p_196454_3_) {
-        if (p_196454_2_.dimension.doesWaterVaporize()) {
+        if (p_196454_2_.func_230315_m_().func_236040_e_()) {
             p_196454_2_.removeBlock(p_196454_3_, false);
         } else {
             p_196454_2_.setBlockState(p_196454_3_, Blocks.WATER.getDefaultState());

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -16,11 +15,8 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.resource.IResourceType;
-import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import team.chisel.api.carving.ICarvingGroup;
 import team.chisel.api.carving.ICarvingVariation;
 import team.chisel.api.carving.IVariationRegistry;
@@ -43,14 +39,14 @@ public class CarvingVariationRegistry implements IVariationRegistry {
     @Override
     public Optional<ICarvingGroup> getGroup(Item item) {
         return groups.values().stream()
-                .filter(g -> g.getItemTag().contains(item))
+                .filter(g -> g.getItemTag().func_230235_a_(item))
                 .findFirst();
     }
 
     @Override
     public Optional<ICarvingGroup> getGroup(Block block) {
         return groups.values().stream()
-                .filter(g -> g.getBlockTag().map(tag -> tag.contains(block)).orElse(false))
+                .filter(g -> g.getBlockTag().map(tag -> tag.func_230235_a_(block)).orElse(false))
                 .findFirst();
     }
 
@@ -110,7 +106,7 @@ public class CarvingVariationRegistry implements IVariationRegistry {
     }
     
     private List<ItemStack> getItemsForChiseling(ICarvingGroup group) {
-        return group.getItemTag().getAllElements().stream()
+        return group.getItemTag().func_230236_b_().stream()
                 .map(ItemStack::new)
                 .sorted(Comparator.comparing(ItemStack::getItem, ItemSorter.variantOrder()))
                 .collect(Collectors.toList());
@@ -132,13 +128,13 @@ public class CarvingVariationRegistry implements IVariationRegistry {
     }
     
     private void onServerStarting(FMLServerAboutToStartEvent event) {
-        event.getServer().getResourceManager().addReloadListener(new ISelectiveResourceReloadListener() {
+        /*event.getServer().getDataPackRegistries().func_240970_h_().addReloadListener(new ISelectiveResourceReloadListener() {
             
             @Override
             public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
 //                resolve();
             }
-        });
+        });*/
     }
 //    @Override
 //    public List<ResourceLocation> getSortedGroups() {

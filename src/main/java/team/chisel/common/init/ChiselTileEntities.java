@@ -1,8 +1,9 @@
 package team.chisel.common.init;
 
 import com.tterrag.registrate.Registrate;
-import com.tterrag.registrate.util.RegistryEntry;
 
+import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.block.Block;
 import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.inventory.container.ContainerType;
@@ -19,10 +20,11 @@ import team.chisel.common.util.ContainerBuilder;
 public class ChiselTileEntities {
     private static final Registrate REGISTRATE = Chisel.registrate();
 
-    public static final RegistryEntry<? extends Block> AUTO_CHISEL = REGISTRATE
+    public static final BlockEntry<? extends Block> AUTO_CHISEL = REGISTRATE
             .object("auto_chisel")
             .block(BlockAutoChisel::new)
-            .tileEntity(TileAutoChisel::new)
+            //.simpleTileEntity(TileAutoChisel::new)
+            .simpleTileEntity(tileEntityType -> new TileAutoChisel())
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), prov.models().getExistingFile(ctx.getId())))
             .item(BlockItem::new)
                 .model((ctx, prov) -> prov.blockItem(ctx::getEntry))
@@ -38,7 +40,7 @@ public class ChiselTileEntities {
 
     public static final RegistryEntry<TileEntityType<TileAutoChisel>> AUTO_CHISEL_TE = REGISTRATE.get(TileEntityType.class);
     
-    public static final RegistryEntry<ContainerType<ContainerAutoChisel>> AUTO_CHISEL_CONTAINER = REGISTRATE.entry((name, callback) -> 
+    public static final RegistryEntry<ContainerType<ContainerAutoChisel>> AUTO_CHISEL_CONTAINER = REGISTRATE.entry((name, callback) ->
             new ContainerBuilder<ContainerAutoChisel, GuiAutoChisel, Registrate>(REGISTRATE, REGISTRATE, name, callback, ContainerAutoChisel::new, () -> (container, inv, displayName) -> new GuiAutoChisel(container, inv, displayName)))
                 .register();
     

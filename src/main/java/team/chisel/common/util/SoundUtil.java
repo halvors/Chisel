@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -49,7 +48,7 @@ public class SoundUtil {
 
     public static void playSound(PlayerEntity player, ItemStack chisel, @Nullable Block target) {
         @Nonnull SoundEvent sound = getSound(player, chisel, target);
-        playSound(player, player.getPosition(), sound);
+        playSound(player, player.func_233580_cy_(), sound);
     }
 
     public static void playSound(PlayerEntity player, BlockPos pos, SoundEvent sound) {

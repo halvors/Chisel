@@ -9,6 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import com.google.common.collect.Lists;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -16,14 +17,12 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import team.chisel.Chisel;
 import team.chisel.api.carving.ICarvingGroup;
 import team.chisel.client.util.ChiselLangKeys;
 import team.chisel.common.init.ChiselItems;
-import team.chisel.common.item.ItemChisel.ChiselType;
 
 @ParametersAreNonnullByDefault
 public class ChiselRecipeCategory implements IRecipeCategory<ICarvingGroup> {
@@ -63,12 +62,12 @@ public class ChiselRecipeCategory implements IRecipeCategory<ICarvingGroup> {
     }
 
     @Override
-    public void draw(ICarvingGroup recipe, double mouseX, double mouseY) {
+    public void draw(ICarvingGroup recipe, MatrixStack mStack, double mouseX, double mouseY) {
         if (layout != null) {
             if (focus == null || focus.getMode() == IFocus.Mode.INPUT) {
-                arrowDown.draw(73, 21);
+                arrowDown.draw(mStack, 73, 21);
             } else {
-                arrowUp.draw(73, 21);
+                arrowUp.draw(mStack, 73, 21);
             }
         }
     }
@@ -134,7 +133,7 @@ public class ChiselRecipeCategory implements IRecipeCategory<ICarvingGroup> {
 
     @Override
     public void setIngredients(ICarvingGroup group, IIngredients ingredients) {
-        List<ItemStack> variants = group.getItemTag().getAllElements().stream().map(ItemStack::new).collect(Collectors.toList());
+        List<ItemStack> variants = group.getItemTag().func_230236_b_().stream().map(ItemStack::new).collect(Collectors.toList());
         
         ingredients.setInputs(VanillaTypes.ITEM, variants);
         ingredients.setOutputs(VanillaTypes.ITEM, variants);

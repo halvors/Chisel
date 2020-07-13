@@ -4,15 +4,14 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
+import com.tterrag.registrate.util.entry.BlockEntry;
+import net.minecraft.loot.ConstantRange;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import com.tterrag.registrate.providers.RegistrateLangProvider;
 import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
-import com.tterrag.registrate.util.RegistryEntry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -25,7 +24,6 @@ import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.ConstantRange;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -42,19 +40,19 @@ public class Features {
 
     private static final ChiselBlockFactory _FACTORY = ChiselBlockFactory.newFactory(Chisel.registrate());
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> ALUMINUM = _FACTORY.newType(Material.IRON, "metals/aluminum")
+    public static final Map<String, BlockEntry<BlockCarvable>> ALUMINUM = _FACTORY.newType(Material.IRON, "metals/aluminum")
             .setGroupName("Aluminum Block")
             .addTag(ChiselCompatTags.STORAGE_BLOCKS_ALUMINUM)
             .variations(VariantTemplates.METAL)
             .build(b -> b.sound(SoundType.METAL).harvestTool(ToolType.PICKAXE).harvestLevel(1));
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> ANDESITE = _FACTORY.newType(Material.ROCK, "andesite")
+    public static final Map<String, BlockEntry<BlockCarvable>> ANDESITE = _FACTORY.newType(Material.ROCK, "andesite")
             .addBlock(Blocks.ANDESITE)
             .addBlock(Blocks.POLISHED_ANDESITE)
             .variations(VariantTemplates.ROCK)
             .build(b -> b.hardnessAndResistance(1.5F, 30.0F).sound(SoundType.STONE));
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> ANTIBLOCK = _FACTORY.newType(Material.ROCK, "antiblock", (p, v) -> new BlockCarvable(p, v))
+    public static final Map<String, BlockEntry<BlockCarvable>> ANTIBLOCK = _FACTORY.newType(Material.ROCK, "antiblock", (p, v) -> new BlockCarvable(p, v))
             .layer(() -> RenderType::getCutout)
             .variations(VariantTemplates.colors(ModelTemplates.twoLayerWithTop("antiblock", false), (prov, block) -> 
                     new ShapedRecipeBuilder(block, 8)
@@ -65,7 +63,7 @@ public class Features {
                         .build(prov)))
             .build();
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> BASALT = _FACTORY.newType(Material.ROCK, "basalt")
+    public static final Map<String, BlockEntry<BlockCarvable>> BASALT = _FACTORY.newType(Material.ROCK, "basalt")
             .variation(VariantTemplates.RAW)
             .variations(VariantTemplates.ROCK)
             .addTag(ChiselCompatTags.STONE_BASALT)
@@ -75,7 +73,7 @@ public class Features {
     private static final ImmutableList<WoodType> VANILLA_WOODS = ImmutableList.of(WoodType.OAK, WoodType.SPRUCE, WoodType.BIRCH, WoodType.ACACIA, WoodType.JUNGLE, WoodType.DARK_OAK);
     
     // Hardcode to vanilla wood types
-    public static final Map<WoodType, Map<String, RegistryEntry<BlockCarvableBookshelf>>> BOOKSHELVES = VANILLA_WOODS.stream()
+    public static final Map<WoodType, Map<String, BlockEntry<BlockCarvableBookshelf>>> BOOKSHELVES = VANILLA_WOODS.stream()
             .collect(Collectors.toMap(Function.identity(), wood -> _FACTORY.newType(Material.WOOD, "bookshelf/" + wood.getName(), BlockCarvableBookshelf::new)
                     .loot((prov, block) -> prov.registerLootTable(block, RegistrateBlockLootTables.droppingWithSilkTouchOrRandomly(block, Items.BOOK, ConstantRange.of(3))))
                     .applyIf(() -> wood == WoodType.OAK, f -> f.addBlock(Blocks.BOOKSHELF))
@@ -98,18 +96,18 @@ public class Features {
                     .next("papers")
                     .build(b -> b.sound(SoundType.WOOD).hardnessAndResistance(1.5f))));
             
-    public static final Map<String, RegistryEntry<BlockCarvable>> BRICKS = _FACTORY.newType(Material.ROCK, "bricks")
+    public static final Map<String, BlockEntry<BlockCarvable>> BRICKS = _FACTORY.newType(Material.ROCK, "bricks")
             .addBlock(Blocks.BRICKS)
             .variations(VariantTemplates.ROCK)
             .build(p -> p.hardnessAndResistance(2.0F, 6.0F));
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> BRONZE = _FACTORY.newType(Material.IRON, "metals/bronze")
+    public static final Map<String, BlockEntry<BlockCarvable>> BRONZE = _FACTORY.newType(Material.IRON, "metals/bronze")
             .setGroupName("Bronze Block")
             .addTag(ChiselCompatTags.STORAGE_BLOCKS_BRONZE)
             .variations(VariantTemplates.METAL)
             .build(p -> p.sound(SoundType.METAL).hardnessAndResistance(5.0F).harvestTool(ToolType.PICKAXE).harvestLevel(1));
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> BROWNSTONE = _FACTORY.newType(Material.ROCK, "brownstone")
+    public static final Map<String, BlockEntry<BlockCarvable>> BROWNSTONE = _FACTORY.newType(Material.ROCK, "brownstone")
             .variation("default")
                 .recipe((prov, block) -> new ShapedRecipeBuilder(block, 4)
                         .patternLine(" S ").patternLine("SCS").patternLine(" S ")
@@ -134,10 +132,10 @@ public class Features {
 //      BlockSpeedHandler.speedupBlocks.add(b);
 //  });
     
-    public static final Map<DyeColor, Map<String, RegistryEntry<BlockCarvableCarpet>>> CARPET = Arrays.stream(DyeColor.values())
-            .collect(Collectors.toMap(Function.identity(), color -> _FACTORY.newType(Material.WOOL, "carpet/" + (color.getName()), BlockCarvableCarpet::new)
-                    .addBlock(new ResourceLocation(color.getName() + "_carpet"))
-                    .setGroupName(RegistrateLangProvider.toEnglishName(color.getName()) + " Carpet")
+    public static final Map<DyeColor, Map<String, BlockEntry<BlockCarvableCarpet>>> CARPET = Arrays.stream(DyeColor.values())
+            .collect(Collectors.toMap(Function.identity(), color -> _FACTORY.newType(Material.WOOL, "carpet/" + (color.getTranslationKey()), BlockCarvableCarpet::new)
+                    .addBlock(new ResourceLocation(color.getTranslationKey() + "_carpet"))
+                    .setGroupName(RegistrateLangProvider.toEnglishName(color.getTranslationKey()) + " Carpet")
                     .model((prov, block) ->
                         prov.simpleBlock(block, prov.models()
                                 .carpet("block/" + ModelTemplates.name(block), prov.modLoc("block/" + ModelTemplates.name(block).replace("carpet", "wool")))
@@ -146,7 +144,7 @@ public class Features {
                     .next("llama")
                     .build(b -> b.sound(SoundType.CLOTH).hardnessAndResistance(0.8F))));
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> CHARCOAL = _FACTORY.newType(Material.ROCK, "charcoal")
+    public static final Map<String, BlockEntry<BlockCarvable>> CHARCOAL = _FACTORY.newType(Material.ROCK, "charcoal")
             .addTag(ChiselCompatTags.STORAGE_BLOCKS_CHARCOAL)
             .variation(VariantTemplates.withRecipe(VariantTemplates.RAW, (prov, block) -> new ShapelessRecipeBuilder(block, 1)
                     .addIngredient(Items.CHARCOAL)
@@ -155,12 +153,12 @@ public class Features {
             .variations(VariantTemplates.ROCK)
             .build(b -> b.hardnessAndResistance(5.0F, 10.0F).sound(SoundType.STONE));
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> COAL = _FACTORY.newType(Material.ROCK, "coal")
+    public static final Map<String, BlockEntry<BlockCarvable>> COAL = _FACTORY.newType(Material.ROCK, "coal")
             .addTag(Tags.Blocks.STORAGE_BLOCKS_COAL)
             .variations(/*VariantTemplates.withUncraft(*/VariantTemplates.ROCK/*, Items.COAL)*/) // TODO
             .build(b -> b.hardnessAndResistance(5.0F, 10.0F).sound(SoundType.STONE));
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> COBBLESTONE = _FACTORY.newType(Material.ROCK, "cobblestone")
+    public static final Map<String, BlockEntry<BlockCarvable>> COBBLESTONE = _FACTORY.newType(Material.ROCK, "cobblestone")
             .addBlock(Blocks.COBBLESTONE)
             .variations(VariantTemplates.ROCK)
             .variation("extra/emboss")
@@ -168,15 +166,15 @@ public class Features {
             .next("extra/marker")
             .build(b -> b.hardnessAndResistance(2.0F, 10.0F).sound(SoundType.STONE));
     
-    public static final Map<DyeColor, Map<String, RegistryEntry<BlockCarvable>>> CONCRETE = Arrays.stream(DyeColor.values())
-            .collect(Collectors.toMap(Function.identity(), color -> _FACTORY.newType(Material.ROCK, "concrete/" + color.getName())
-                    .addBlock(new ResourceLocation(color.getName() + "_concrete"))
-                    .setGroupName(RegistrateLangProvider.toEnglishName(color.getName()) + " Concrete")
+    public static final Map<DyeColor, Map<String, BlockEntry<BlockCarvable>>> CONCRETE = Arrays.stream(DyeColor.values())
+            .collect(Collectors.toMap(Function.identity(), color -> _FACTORY.newType(Material.ROCK, "concrete/" + color.getTranslationKey())
+                    .addBlock(new ResourceLocation(color.getTranslationKey() + "_concrete"))
+                    .setGroupName(RegistrateLangProvider.toEnglishName(color.getTranslationKey()) + " Concrete")
                     .variations(VariantTemplates.ROCK)
                     .build(p -> p.sound(SoundType.STONE).hardnessAndResistance(1.8F))));
 //  BlockSpeedHandler.speedupBlocks.add(b);
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> FACTORY = _FACTORY.newType(Material.IRON, "factory")
+    public static final Map<String, BlockEntry<BlockCarvable>> FACTORY = _FACTORY.newType(Material.IRON, "factory")
             .variation("dots")
                 .recipe((prov, block) -> new ShapedRecipeBuilder(block, 32)
                         .patternLine("SXS").patternLine("X X").patternLine("SXS")
@@ -209,19 +207,19 @@ public class Features {
             .next("wireframeblue")
             .build(b -> b.sound(ChiselSoundTypes.METAL));
 
-    public static final Map<String, RegistryEntry<BlockCarvable>> LIMESTONE = _FACTORY.newType(Material.ROCK, "limestone")
+    public static final Map<String, BlockEntry<BlockCarvable>> LIMESTONE = _FACTORY.newType(Material.ROCK, "limestone")
             .variation(VariantTemplates.RAW)
             .variations(VariantTemplates.ROCK)
             .addTag(ChiselCompatTags.STONE_LIMESTONE)
             .build(b -> b.hardnessAndResistance(1.5F, 10.0F).sound(SoundType.STONE));
 
-    public static final Map<String, RegistryEntry<BlockCarvable>> MARBLE = _FACTORY.newType(Material.ROCK, "marble")
+    public static final Map<String, BlockEntry<BlockCarvable>> MARBLE = _FACTORY.newType(Material.ROCK, "marble")
             .variation(VariantTemplates.RAW)
             .variations(VariantTemplates.ROCK)
             .addTag(ChiselCompatTags.STONE_MARBLE)
             .build(b -> b.hardnessAndResistance(1.5F, 10.0F).sound(SoundType.STONE));
 
-    public static final Map<WoodType, Map<String, RegistryEntry<BlockCarvable>>> PLANKS = VANILLA_WOODS.stream()
+    public static final Map<WoodType, Map<String, BlockEntry<BlockCarvable>>> PLANKS = VANILLA_WOODS.stream()
             .map(t -> Pair.of(t, new ResourceLocation(t.getName() + "_planks")))
             .collect(Collectors.toMap(Pair::getFirst, pair -> _FACTORY.newType(Material.WOOD, "planks/" + pair.getFirst().getName())
                     .addBlock(pair.getSecond())
@@ -230,15 +228,15 @@ public class Features {
                     .build($ -> Block.Properties.from(ForgeRegistries.BLOCKS.getValue(pair.getSecond())))));
 
     // TODO Temp Merge with above once 1.16 hits
-    /*public static final Map<String, Map<String, RegistryEntry<BlockCarvable>>> PLANKS_116 = ImmutableList.of("crimson", "warped").stream()
+    public static final Map<String, Map<String, BlockEntry<BlockCarvable>>> PLANKS_116 = ImmutableList.of("crimson").stream()
             .map(t -> Pair.of(t, new ResourceLocation(t + "_planks")))
             .collect(Collectors.toMap(Pair::getFirst, pair -> _FACTORY.newType(Material.WOOD, "planks/" + pair.getFirst())
                     .addBlock(pair.getSecond())
                     .setGroupName(RegistrateLangProvider.toEnglishName(pair.getFirst()) + " Planks")
                     .variations(VariantTemplates.PLANKS)
-                    .build($ -> Block.Properties.from(ForgeRegistries.BLOCKS.getValue(pair.getSecond())))));//*/
+                    .build($ -> Block.Properties.from(ForgeRegistries.BLOCKS.getValue(pair.getSecond())))));
 
-    public static final Map<String, RegistryEntry<BlockCarvable>> STONE_BRICKS = _FACTORY.newType(Material.ROCK, "stone_bricks")
+    public static final Map<String, BlockEntry<BlockCarvable>> STONE_BRICKS = _FACTORY.newType(Material.ROCK, "stone_bricks")
             .addBlock(Blocks.STONE)
             .addBlock(Blocks.STONE_BRICKS)
             .addBlock(Blocks.CHISELED_STONE_BRICKS)
@@ -249,7 +247,7 @@ public class Features {
             .next("extra/sunken")
             .build(p -> p.hardnessAndResistance(1.5F, 10.0F));
     
-    public static final Map<String, RegistryEntry<BlockCarvable>> TYRIAN = _FACTORY.newType(Material.IRON, "tyrian")
+    public static final Map<String, BlockEntry<BlockCarvable>> TYRIAN = _FACTORY.newType(Material.IRON, "tyrian")
             .variation("shining")
                 .recipe((prov, block) -> new ShapedRecipeBuilder(block, 32)
                         .patternLine("SSS").patternLine("SXS").patternLine("SSS")
@@ -274,10 +272,10 @@ public class Features {
             .next("plate") // FIXME temporary texture
             .build(b -> b.sound(SoundType.METAL));
     
-    public static final Map<DyeColor, Map<String, RegistryEntry<BlockCarvable>>> WOOL = Arrays.stream(DyeColor.values())
-            .collect(Collectors.toMap(Function.identity(), color -> _FACTORY.newType(Material.WOOL, "wool/" + (color.getName()))
-                    .addBlock(new ResourceLocation(color.getName() + "_wool"))
-                    .setGroupName(RegistrateLangProvider.toEnglishName(color.getName()) + " Wool")
+    public static final Map<DyeColor, Map<String, BlockEntry<BlockCarvable>>> WOOL = Arrays.stream(DyeColor.values())
+            .collect(Collectors.toMap(Function.identity(), color -> _FACTORY.newType(Material.WOOL, "wool/" + (color.getTranslationKey()))
+                    .addBlock(new ResourceLocation(color.getTranslationKey() + "_wool"))
+                    .setGroupName(RegistrateLangProvider.toEnglishName(color.getTranslationKey()) + " Wool")
                     .variation("legacy")
                     .next("llama")
                     .build(b -> b.sound(SoundType.CLOTH).hardnessAndResistance(0.8F))));

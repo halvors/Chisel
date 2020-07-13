@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.minecraft.util.math.vector.Vector3d;
 import org.apache.commons.lang3.Validate;
 
 import lombok.Getter;
@@ -37,7 +38,6 @@ import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.chunk.Chunk;
@@ -446,8 +446,8 @@ public class TileAutoChisel extends TileEntity implements ITickableTileEntity, I
     }
     
     private Supplier<TargetPoint> targetNearby() {
-        Vec3d pos = new Vec3d(getPos()).add(0.5, 0.5, 0.5);
-        return TargetPoint.p(pos.x, pos.y, pos.z, 64 * 64, getWorld().getDimension().getType());
+        Vector3d pos = new Vector3d(getPos().getX(), getPos().getY(), getPos().getZ()).add(0.5, 0.5, 0.5);
+        return TargetPoint.p(pos.x, pos.y, pos.z, 64 * 64, getWorld().func_234923_W_());
     }
     
     private final EnumMap<Direction, LazyOptional<IItemHandler>> viewCache = new EnumMap<>(Direction.class);
@@ -481,16 +481,16 @@ public class TileAutoChisel extends TileEntity implements ITickableTileEntity, I
     
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        handleUpdateTag(pkt.getNbtCompound());
+        handleUpdateTag(null, pkt.getNbtCompound());
         super.onDataPacket(net, pkt);
     }
     
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
+    public void handleUpdateTag(BlockState blockState, CompoundNBT tag) {
         if (tag.contains("customName")) {
-            setCustomName(ITextComponent.Serializer.fromJson(tag.getString("customName")));
+            setCustomName(ITextComponent.Serializer.func_240643_a_(tag.getString("customName")));
         }
-        super.handleUpdateTag(tag);
+        super.handleUpdateTag(blockState, tag);
     }
     
     @Override
@@ -508,8 +508,8 @@ public class TileAutoChisel extends TileEntity implements ITickableTileEntity, I
     }
     
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
+    public void func_230337_a_(BlockState blockState, CompoundNBT compound) {
+        super.func_230337_a_(blockState, compound);
         this.otherInv.deserializeNBT(compound.getCompound("other"));
         this.inputInv.deserializeNBT(compound.getCompound("input"));
         this.outputInv.deserializeNBT(compound.getCompound("output"));
@@ -517,7 +517,7 @@ public class TileAutoChisel extends TileEntity implements ITickableTileEntity, I
         this.progress = compound.getInt("progress");
         this.sourceSlot = compound.getInt("source");
         if (compound.contains("customName")) {
-            this.customName = ITextComponent.Serializer.fromJson(compound.getString("customName"));
+            this.customName = ITextComponent.Serializer.func_240643_a_(compound.getString("customName"));
         }
     }
     

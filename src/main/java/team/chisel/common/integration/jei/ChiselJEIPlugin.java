@@ -1,13 +1,12 @@
 package team.chisel.common.integration.jei;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import com.google.common.collect.ImmutableMap;
-import com.tterrag.registrate.util.RegistryEntry;
 
+import com.tterrag.registrate.util.entry.RegistryEntry;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -21,11 +20,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IRegistryDelegate;
 import team.chisel.Chisel;
-import team.chisel.api.carving.CarvingUtils;
 import team.chisel.client.util.ChiselLangKeys;
 import team.chisel.common.init.ChiselItems;
 import team.chisel.common.item.ItemChisel;
-import team.chisel.common.item.ItemChisel.ChiselType;
 
 @JeiPlugin
 @ParametersAreNonnullByDefault

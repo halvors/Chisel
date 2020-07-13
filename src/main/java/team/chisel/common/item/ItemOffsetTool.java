@@ -15,6 +15,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.vector.Vector3d;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Lists;
@@ -29,7 +31,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -40,7 +41,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.api.distmarker.Dist;
@@ -111,8 +111,8 @@ public class ItemOffsetTool extends Item {
                 return canOffset(context.getWorld(), context.getPos(), context.getItem()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
             } else {
                 ChunkDataBase<OffsetData> cd = PerChunkData.INSTANCE.getData(DATA_KEY);
-                OffsetData data = cd.getDataForChunk(world.getDimension().getType(), world.getChunk(context.getPos()).getPos());
-                Vec3d hitVec = context.getHitVec();
+                OffsetData data = cd.getDataForChunk(world.func_230315_m_(), world.getChunk(context.getPos()).getPos());
+                Vector3d hitVec = context.getHitVec();
                 data.move(getMoveDir(context.getFace(), hitVec));
                 PerChunkData.INSTANCE.chunkModified((Chunk) world.getChunk(context.getPos()), DATA_KEY);
             }
@@ -120,7 +120,7 @@ public class ItemOffsetTool extends Item {
         return super.onItemUse(context);
     }
 
-    public Direction getMoveDir(Direction face, Vec3d hitVec) {
+    public Direction getMoveDir(Direction face, Vector3d hitVec) {
         Map<Double, Direction> map = Maps.newHashMap();
         if (face.getXOffset() != 0) {
             fillMap(map, hitVec.z, hitVec.y, DOWN, UP, NORTH, SOUTH);
@@ -165,32 +165,32 @@ public class ItemOffsetTool extends Item {
             double y = Math.max(0, face.getYOffset());
             double z = Math.max(0, face.getZOffset());
             
-            Vec3d viewport = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+            Vector3d viewport = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 
             RenderSystem.translated(-viewport.x, -viewport.y, -viewport.z);
             RenderSystem.translated(pos.getX(), pos.getY(), pos.getZ());
             RenderSystem.color4f(0, 0, 0, 1);
 
             if (face.getXOffset() != 0) {
-                buf.vertex(x, 0, 0).endVertex();
-                buf.vertex(x, 1, 1).endVertex();
-                buf.vertex(x, 1, 0).endVertex();
-                buf.vertex(x, 0, 1).endVertex();
+                buf.pos(x, 0, 0).endVertex();
+                buf.pos(x, 1, 1).endVertex();
+                buf.pos(x, 1, 0).endVertex();
+                buf.pos(x, 0, 1).endVertex();
             } else if (face.getYOffset() != 0) {
-                buf.vertex(0, y, 0).endVertex();
-                buf.vertex(1, y, 1).endVertex();
-                buf.vertex(1, y, 0).endVertex();
-                buf.vertex(0, y, 1).endVertex();
+                buf.pos(0, y, 0).endVertex();
+                buf.pos(1, y, 1).endVertex();
+                buf.pos(1, y, 0).endVertex();
+                buf.pos(0, y, 1).endVertex();
             } else {
-                buf.vertex(0, 0, z).endVertex();
-                buf.vertex(1, 1, z).endVertex();
-                buf.vertex(1, 0, z).endVertex();
-                buf.vertex(0, 1, z).endVertex();
+                buf.pos(0, 0, z).endVertex();
+                buf.pos(1, 1, z).endVertex();
+                buf.pos(1, 0, z).endVertex();
+                buf.pos(0, 1, z).endVertex();
             }
 
             Tessellator.getInstance().draw();
 
-            Vec3d hit = target.getHitVec();
+            Vector3d hit = target.getHitVec();
 
             // Draw the triangle highlight
             RenderSystem.enableBlend();
@@ -214,17 +214,17 @@ public class ItemOffsetTool extends Item {
             // Always draw the center point first, then draw the next two points.
             // Use either the move dir offset, or 0/1 if the move dir is not offset in this direction
             if (face.getXOffset() != 0) {
-                buf.vertex(x, 0.5, 0.5).endVertex();
-                buf.vertex(x, isY ? clampedY : 0, isZ ? clampedZ : 0).endVertex();
-                buf.vertex(x, isY ? clampedY : 1, isZ ? clampedZ : 1).endVertex();
+                buf.pos(x, 0.5, 0.5).endVertex();
+                buf.pos(x, isY ? clampedY : 0, isZ ? clampedZ : 0).endVertex();
+                buf.pos(x, isY ? clampedY : 1, isZ ? clampedZ : 1).endVertex();
             } else if (face.getYOffset() != 0) {
-                buf.vertex(0.5, y, 0.5).endVertex();
-                buf.vertex(isX ? clampedX : 0, y, isZ ? clampedZ : 0).endVertex();
-                buf.vertex(isX ? clampedX : 1, y, isZ ? clampedZ : 1).endVertex();
+                buf.pos(0.5, y, 0.5).endVertex();
+                buf.pos(isX ? clampedX : 0, y, isZ ? clampedZ : 0).endVertex();
+                buf.pos(isX ? clampedX : 1, y, isZ ? clampedZ : 1).endVertex();
             } else {
-                buf.vertex(0.5, 0.5, z).endVertex();
-                buf.vertex(isX ? clampedX : 0, isY ? clampedY : 0, z).endVertex();
-                buf.vertex(isX ? clampedX : 1, isY ? clampedY : 1, z).endVertex();
+                buf.pos(0.5, 0.5, z).endVertex();
+                buf.pos(isX ? clampedX : 0, isY ? clampedY : 0, z).endVertex();
+                buf.pos(isX ? clampedX : 1, isY ? clampedY : 1, z).endVertex();
             }
             Tessellator.getInstance().draw();
             

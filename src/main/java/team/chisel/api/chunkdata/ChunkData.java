@@ -4,9 +4,9 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.dimension.DimensionType;
 
 public class ChunkData {
 
@@ -37,7 +37,7 @@ public class ChunkData {
     }
 
     public static IOffsetData getOffsetForChunk(Chunk chunk) {
-        return getOffsetForChunk(chunk.getWorld().getDimension().getType(), chunk.getPos());
+        return getOffsetForChunk(chunk.getWorld().func_230315_m_(), chunk.getPos());
     }
 
     public static IOffsetData getOffsetForChunk(DimensionType dimID, ChunkPos chunk) {

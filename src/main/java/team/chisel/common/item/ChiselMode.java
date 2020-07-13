@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.util.math.vector.Vector3i;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.common.collect.Sets;
@@ -26,7 +27,6 @@ import net.minecraft.util.Direction.AxisDirection;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import team.chisel.Chisel;
@@ -59,7 +59,7 @@ public enum ChiselMode implements IChiselMode {
             if (side.getAxisDirection() == AxisDirection.NEGATIVE) {
                 side = side.getOpposite();
             }
-            Vec3i offset = side.getDirectionVec();
+            Vector3i offset = side.getDirectionVec();
             return filteredIterable(BlockPos.getAllInBox(NEG_ONE.add(offset).add(pos), ONE.subtract(offset).add(pos)), player.world, player.world.getBlockState(pos));
         }
         

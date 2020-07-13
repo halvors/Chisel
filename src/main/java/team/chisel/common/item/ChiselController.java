@@ -23,7 +23,7 @@ import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
@@ -92,7 +92,7 @@ public class ChiselController {
                     }
                 }
             } else {
-                List<Block> variations = new ArrayList<>(blockGroup.getBlockTag().map(Tag::getAllElements).orElse(Collections.emptyList()));
+                List<Block> variations = new ArrayList<>(blockGroup.getBlockTag().map(ITag::func_230236_b_).orElse(Collections.emptyList()));
                 
                 variations = variations.stream().filter(v -> v.getBlock() != null).collect(Collectors.toList());
                         
@@ -285,7 +285,7 @@ public class ChiselController {
                     }
                 } while (!painting.onValidSurface());
                 damageItem(held, event.getPlayer());
-                event.getPlayer().world.playSound(event.getPlayer(), event.getTarget().getPosition(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.NEUTRAL, 1, 1);
+                event.getPlayer().world.playSound(event.getPlayer(), event.getTarget().func_233580_cy_(), SoundEvents.ENTITY_PAINTING_PLACE, SoundCategory.NEUTRAL, 1, 1);
                 event.setCanceled(true);
             }
         }

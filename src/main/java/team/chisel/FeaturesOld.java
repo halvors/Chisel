@@ -10,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.DyeColor;
-import net.minecraftforge.common.ToolType;
 import team.chisel.api.block.ChiselBlockFactory;
-import team.chisel.client.data.VariantTemplates;
 
 @RequiredArgsConstructor
 public enum FeaturesOld {
@@ -3054,8 +3052,8 @@ public enum FeaturesOld {
 //    },
 //
     WOOL(factory -> Arrays.stream(DyeColor.values())
-            .forEach(color -> factory.newType(Material.WOOL, "wool/" + (color.getName()))
-                    .setGroupName(RegistrateLangProvider.toEnglishName(color.getName()) + " Wool")
+            .forEach(color -> factory.newType(Material.WOOL, "wool/" + (color.getTranslationKey()))
+                    .setGroupName(RegistrateLangProvider.toEnglishName(color.getTranslationKey()) + " Wool")
                     .variation("legacy")
                     .next("llama")
                     .build(b -> b.sound(SoundType.CLOTH).hardnessAndResistance(0.8F)))),

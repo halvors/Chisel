@@ -23,7 +23,7 @@ import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.providers.RegistrateLangProvider;
 import com.tterrag.registrate.providers.RegistrateTagsProvider;
 import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
-import com.tterrag.registrate.util.RegistryEntry;
+import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
@@ -40,10 +40,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.item.Item;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollection;
+import net.minecraft.tags.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -70,7 +67,8 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
 
     private final BlockProvider<T> provider;
 
-    private @Nullable Tag<Block> group;
+    private @Nullable
+    ITag.INamedTag<Block> group;
     
     @Setter(AccessLevel.NONE)
     private Set<ResourceLocation> otherBlocks = new HashSet<>();
@@ -95,14 +93,14 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
     @Accessors(fluent = true)
     private NonNullBiConsumer<RegistrateBlockLootTables, T> loot = RegistrateBlockLootTables::registerDropSelfLootTable;
 
-    protected ChiselBlockBuilder(ChiselBlockFactory parent, Registrate registrate, Material material, String blockName, @Nullable Tag<Block> group, BlockProvider<T> provider) {
+    protected ChiselBlockBuilder(ChiselBlockFactory parent, Registrate registrate, Material material, String blockName, @Nullable ITag.INamedTag<Block> group, BlockProvider<T> provider) {
         this.parent = parent;
         this.registrate = registrate;
         this.material = material;
         this.blockName = blockName;
         this.provider = provider;
         this.group = group;
-        this.groupName = RegistrateLangProvider.toEnglishName(group.getId().getPath());
+        this.groupName = RegistrateLangProvider.toEnglishName(group.func_230234_a_().toString());
         this.variations = new ArrayList<VariationBuilder<T>>();
     }
     
@@ -147,8 +145,8 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
         return this;
     }
     
-    public ChiselBlockBuilder<T> addTag(Tag<Block> tag) {
-        return addTag(tag.getId());
+    public ChiselBlockBuilder<T> addTag(ITag.INamedTag<Block> tag) {
+        return addTag(tag.func_230234_a_());
     }
 
     public ChiselBlockBuilder<T> addTag(ResourceLocation tag) {
@@ -164,7 +162,7 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
      * @return An array of blocks created. More blocks are automatically created if the unbaked variations will not fit into one block.
      */
     @SuppressWarnings({ "unchecked", "null" })
-    public Map<String, RegistryEntry<T>> build() {
+    public Map<String, BlockEntry<T>> build() {
         return build(NO_ACTION);
     }
 
@@ -177,7 +175,7 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
      * @return An array of blocks created. More blocks are automatically created if the unbaked variations will not fit into one block.
      */
     @SuppressWarnings({ "unchecked", "null" })
-    public Map<String, RegistryEntry<T>> build(NonNullUnaryOperator<Block.Properties> after) {
+    public Map<String, BlockEntry<T>> build(NonNullUnaryOperator<Block.Properties> after) {
         if (variations.size() == 0) {
             throw new IllegalArgumentException("Must have at least one variation!");
         }
@@ -185,7 +183,7 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
         for (int i = 0; i < variations.size(); i++) {
             data[i] = variations.get(i).doBuild();
         }
-        Map<String, RegistryEntry<T>> ret = new HashMap<>(data.length);
+        Map<String, BlockEntry<T>> ret = new HashMap<>(data.length);
         ICarvingGroup group = CarvingUtils.itemGroup(this.group, this.groupName);
         for (int i = 0; i < data.length; i++) {
             if (Strings.emptyToNull(data[i].getName()) != null) {
@@ -215,16 +213,16 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
             CarvingUtils.getChiselRegistry().addGroup(group);
             if (!otherBlocks.isEmpty() || !otherTags.isEmpty()) {
                 addExtraTagEntries(ProviderType.BLOCK_TAGS, t -> t, ForgeRegistries.BLOCKS::getValue);
-                addExtraTagEntries(ProviderType.ITEM_TAGS, t -> parent.getItemTag(t.getId()), ForgeRegistries.ITEMS::getValue);
+                addExtraTagEntries(ProviderType.ITEM_TAGS, t -> parent.getItemTag(t.func_230234_a_()), ForgeRegistries.ITEMS::getValue);
             }
         }
         return ret;
     }
     
     @SuppressWarnings({ "unchecked", "null" })
-    private <TAG> void addExtraTagEntries(ProviderType<RegistrateTagsProvider<TAG>> type, NonNullFunction<Tag<Block>, Tag<TAG>> tagGetter, NonNullFunction<ResourceLocation, TAG> entryLookup) {
-        registrate.addDataGenerator(type, prov -> prov.getBuilder(tagGetter.apply(this.group))
-                .add((TAG[]) otherBlocks.stream()
+    private <TAG> void addExtraTagEntries(ProviderType<RegistrateTagsProvider<TAG>> type, NonNullFunction<ITag.INamedTag<Block>, ITag.INamedTag<TAG>> tagGetter, NonNullFunction<ResourceLocation, TAG> entryLookup) {
+        registrate.addDataGenerator(type, prov -> prov.func_240522_a_(tagGetter.apply(this.group))
+                .addTags((ITag.INamedTag<TAG>[]) otherBlocks.stream()
                         .map(entryLookup::apply)
                         .toArray())
                 .addOptionalTag(otherTags.toArray(new ResourceLocation[0])));
@@ -239,7 +237,7 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
     
     private <I extends Item, P> ItemBuilder<I, P> addTag(ItemBuilder<I, P> builder) {
         if (this.group != null) {
-            return builder.tag(parent.getItemTag(this.group.getId()));
+            return builder.tag(parent.getItemTag(this.group.func_230234_a_()));
         }
         return builder;
     }
@@ -291,11 +289,11 @@ public class ChiselBlockBuilder<T extends Block & ICarvable> {
             return buildVariation().variation(name);
         }
 
-        public Map<String, RegistryEntry<T>> build() {
+        public Map<String, BlockEntry<T>> build() {
             return buildVariation().build();
         }
         
-        public Map<String, RegistryEntry<T>> build(NonNullUnaryOperator<Block.Properties> after) {
+        public Map<String, BlockEntry<T>> build(NonNullUnaryOperator<Block.Properties> after) {
             return buildVariation().build(after);
         }
 

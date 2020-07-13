@@ -12,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.0.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath 'org.ajoberstar:gradle-git:0.10.1'
     }
 }
@@ -44,7 +44,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 minecraft {
-	mappings channel: 'snapshot', version: '20200301-mixed-1.15.2'
+    mappings channel: 'snapshot', version: '20200514-1.16'
     
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -110,14 +110,11 @@ repositories {
 	maven { // CTM
 		url "http://maven.tterrag.com/"
 	}
-	maven { // WAILA
-		url "http://mobiusstrip.eu/maven"
-	}
     maven { // JEI
         url "http://dvs1.progwml6.com/files/maven"
     }
-    maven { // Blood Magic
-        url "http://tehnut.info/maven"
+    maven { // HWYLA
+        url "http://maven.tehnut.info"
     }
 }
 
@@ -128,7 +125,7 @@ configurations {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 	implementation fg.deobf("team.chisel.ctm:CTM:MC${minecraft_version}-${ctm_version}")
-	implementation "mcp.mobius.waila:Hwyla:${hwyla_version}:api"
+    implementation "mcp.mobius.waila:Hwyla:${hwyla_version}:api"
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
