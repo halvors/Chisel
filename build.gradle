@@ -1,14 +1,9 @@
 buildscript {
     repositories {
-        mavenCentral()
-        mavenLocal()
+        jcenter()  
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
     }
     dependencies {
@@ -50,8 +45,8 @@ minecraft {
 
     runs {
         client {
-        	taskName 'chisel_client'
-        	
+            taskName 'chisel_client'
+        
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'CORE,REGISTRIES'
@@ -65,7 +60,7 @@ minecraft {
         }
 
         server {
-        	taskName 'chisel_server'
+            taskName 'chisel_server'
         
             workingDirectory project.file('run')
 
@@ -80,7 +75,7 @@ minecraft {
         }
         
         data {
-        	taskName 'chisel_data'
+            taskName 'chisel_data'
         
             workingDirectory project.file('run')
             
@@ -171,12 +166,12 @@ lombok {
 // Add external annotations
 /*eclipse.classpath.file {
 	withXml {
-    	def node = it.asNode()
+        def node = it.asNode()
         node.get('classpathentry').each {
-        	// Allow external annotations on Minecraft/Forge and JRE
-        	if (it.attribute('path').contains('forgeSrc') || it.attribute('path').contains('JRE_CONTAINER')) {
-        		it.appendNode('attributes').appendNode('attribute', [name: 'annotationpath', value: '/Chisel/externalannotations/'])
-        	}
+            // Allow external annotations on Minecraft/Forge and JRE
+            if (it.attribute('path').contains('forgeSrc') || it.attribute('path').contains('JRE_CONTAINER')) {
+                it.appendNode('attributes').appendNode('attribute', [name: 'annotationpath', value: '/Chisel/externalannotations/'])
+            }
         }
     }
 }*/
@@ -254,7 +249,7 @@ curseforge {
             displayName = "Chisel - ${version}"
         }
         relations {
-        	requiredLibrary 'ctm'
+            requiredLibrary 'ctm'
         }
     }
 }
